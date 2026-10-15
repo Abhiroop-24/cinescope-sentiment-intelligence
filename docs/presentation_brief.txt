@@ -1,0 +1,633 @@
+CINESCOPE
+Detailed Presentation Brief
+Prepared for the project presentation and PPT creation
+
+======================================================================
+1. PROJECT TITLE
+======================================================================
+
+CINESCOPE: Explainable Movie Review Sentiment Intelligence
+
+Course: PES University - UE24CS352A Machine Learning
+Project type: Machine learning reproduction attempt and interactive demo
+Research reference:
+Wu, C.-L. and Shin, S.-L., "Machine Learning Based Classification for
+Sentimental Analysis of IMDb Reviews", Stanford CS229 project report, 2020.
+
+======================================================================
+2. PROJECT SUMMARY
+======================================================================
+
+CINESCOPE is an explainable sentiment-analysis system for movie reviews.
+It predicts whether a review is positive or negative and displays the
+important words and phrases that influenced the prediction.
+
+The project combines:
+
+* The official IMDb Large Movie Review Dataset.
+* Text cleaning and normalization.
+* TF-IDF feature extraction.
+* Unigram and bigram phrase features.
+* Binary logistic regression.
+* Batched PyTorch training with CUDA support.
+* A lightweight JSON model artifact.
+* A Python HTTP API and optional FastAPI adapter.
+* A responsive black-and-white dashboard.
+* A data-analysis and visualization notebook.
+* Automated tests and reproducible documentation.
+
+The final model was evaluated on the complete held-out IMDb test set.
+
+======================================================================
+3. MOTIVATION AND PROBLEM STATEMENT
+======================================================================
+
+Movie reviews contain strong opinions, but the language is noisy and
+varied. A review may express sentiment through:
+
+* Clearly positive words: brilliant, enjoyable, beautiful.
+* Clearly negative words: boring, terrible, disappointing.
+* Short phrases: not worth, poor acting, very good.
+* Negation and combinations of words.
+
+The problem is to classify an unseen movie review into one of two classes:
+
+* Positive
+* Negative
+
+The project also addresses a second problem: a prediction should be
+understandable. Instead of returning only a label, CINESCOPE displays
+influential terms and their direction of contribution.
+
+======================================================================
+4. RESEARCH PAPER CONNECTION
+======================================================================
+
+The assigned paper studies sentiment classification on IMDb reviews and
+compares multiple feature representations and machine-learning models.
+
+The paper discusses:
+
+* Binary features.
+* Count features.
+* N-gram features.
+* TF-IDF features.
+* Logistic regression.
+* Support Vector Machines.
+* Naive Bayes.
+* Random forests.
+* Boosting.
+* Deep neural networks.
+
+The reported paper result was approximately 90.6 percent accuracy for a
+deep neural network using binary trigram features.
+
+CINESCOPE is a reproducible reproduction attempt rather than an exact
+replication. The public IMDb dataset provides already-labeled positive and
+negative folders, but it does not expose the original numeric rating for
+every review. Therefore, the paper's exact rating filtering cannot be
+reconstructed from the public files.
+
+======================================================================
+5. DATASET
+======================================================================
+
+Dataset: IMDb Large Movie Review Dataset
+
+Official split:
+
+* Training reviews: 25,000
+* Test reviews: 25,000
+* Total reviews: 50,000
+* Positive training reviews: 12,500
+* Negative training reviews: 12,500
+* Positive test reviews: 12,500
+* Negative test reviews: 12,500
+
+The dataset is balanced between positive and negative classes.
+
+Dataset handling:
+
+1. The official archive is downloaded from the Stanford IMDb dataset URL.
+2. The archive is extracted into data/raw/aclImdb.
+3. Reviews are read from train/pos, train/neg, test/pos, and test/neg.
+4. The raw dataset is excluded from Git using .gitignore.
+5. Only lightweight source code, documentation, metrics, and model
+   artifacts are committed to GitHub.
+
+This prevents the repository from becoming unnecessarily large and keeps
+the dataset reproducible through the download command.
+
+======================================================================
+6. TEXT PREPROCESSING
+======================================================================
+
+Training and prediction use the same preprocessing logic.
+
+Step 1: Lowercasing
+
+All review text is converted to lowercase so that words such as "Good"
+and "good" map to the same feature.
+
+Step 2: Token extraction
+
+Alphabetic tokens are extracted with a regular expression. Contractions
+such as "isn't" are preserved as one token where possible.
+
+Step 3: Stopword removal
+
+Common words with limited sentiment value are removed. Examples include
+"the", "is", "and", "to", and "with".
+
+Step 4: Feature construction
+
+The system creates:
+
+* Unigrams: one-word features such as "brilliant".
+* Bigrams: two-word features such as "not worth" and "poor acting".
+
+Step 5: TF-IDF weighting
+
+Term Frequency-Inverse Document Frequency gives higher importance to
+features that are useful in a document but not equally common in every
+document.
+
+Step 6: Normalization
+
+Each review vector is normalized before being passed to the classifier.
+
+Final feature configuration:
+
+* Maximum features: 20,000
+* N-gram range: 1 to 2
+* Minimum document frequency: 2
+* Representation: normalized TF-IDF unigrams and bigrams
+
+Why bigrams were added:
+
+An individual word does not always capture the complete sentiment. For
+example, "good" and "not good" have opposite meanings. Bigrams preserve
+short word-order patterns and improved the measured result.
+
+======================================================================
+7. MODEL AND TRAINING
+======================================================================
+
+Classifier: Binary logistic regression
+
+Logistic regression estimates the probability that a review belongs to
+the positive class. The output is a value between 0 and 1.
+
+Interpretation:
+
+* Probability >= 0.5: positive
+* Probability < 0.5: negative
+
+The model stores:
+
+* The TF-IDF vocabulary.
+* The inverse-document-frequency values.
+* The learned feature weights.
+* The learned bias.
+* Training configuration.
+
+The vectorizer and classifier are saved together as a JSON artifact so
+that the API can use exactly the same preprocessing and feature mapping
+as training.
+
+CUDA acceleration:
+
+* PyTorch is used for batched training.
+* CUDA is selected when requested and available.
+* Feature rows are converted into batched tensors.
+* Adam optimization is used for the accelerated training path.
+* The saved inference artifact remains lightweight and can be loaded by
+  the Python server.
+
+The project reports GPU usage as an Nvidia Geforce RTX GPU without
+depending on a specific model number in the user interface.
+
+======================================================================
+8. MODEL IMPROVEMENT
+======================================================================
+
+Initial unigram-only CUDA baseline:
+
+* Features: 12,000 TF-IDF unigrams
+* Accuracy: 87.78 percent
+* F1 score: 88.10 percent
+
+Improved phrase-aware model:
+
+* Features: 20,000 TF-IDF unigrams and bigrams
+* Accuracy: 88.46 percent
+* F1 score: 88.74 percent
+
+Measured improvement:
+
+* Accuracy improvement: 0.68 percentage points
+
+The improvement came from adding phrase features rather than changing the
+test set or changing the evaluation procedure.
+
+======================================================================
+9. FINAL EVALUATION
+======================================================================
+
+The final model was evaluated on all 25,000 held-out IMDb test reviews.
+
+Accuracy: 88.46 percent
+
+Accuracy means:
+
+22,115 of 25,000 test reviews were classified correctly.
+
+Precision: 86.66 percent
+
+When the model predicts positive, precision measures how often that
+prediction is correct.
+
+Recall: 90.92 percent
+
+Recall measures how many of all truly positive reviews the model finds.
+
+F1 score: 88.74 percent
+
+F1 is the harmonic mean of precision and recall. It balances both types
+of performance.
+
+Confusion-matrix counts:
+
+* True positives: 11,365
+* True negatives: 10,750
+* False positives: 1,750
+* False negatives: 1,135
+
+Interpretation:
+
+* True positive: a positive review correctly predicted as positive.
+* True negative: a negative review correctly predicted as negative.
+* False positive: a negative review incorrectly predicted as positive.
+* False negative: a positive review incorrectly predicted as negative.
+
+All final numbers are stored in:
+
+results/gpu_baseline_metrics.json
+
+======================================================================
+10. EXPLAINABILITY
+======================================================================
+
+CINESCOPE explains predictions using the learned feature weights.
+
+For every input review:
+
+1. The review is converted into the same normalized features used during
+   training.
+2. Each present feature is multiplied by its learned model weight.
+3. Positive contributions support the positive class.
+4. Negative contributions support the negative class.
+5. The most influential terms are returned by the API.
+
+Example positive explanation terms may include:
+
+* brilliant
+* beautiful
+* moving
+* thoughtful
+
+Example negative explanation terms may include:
+
+* boring
+* terrible
+* weak
+* disappointing
+
+Important limitation:
+
+These terms are model feature contributions, not proof of causality.
+
+======================================================================
+11. API AND BACKEND
+======================================================================
+
+The default application uses a dependency-light Python HTTP server.
+
+Available endpoints:
+
+GET /api/health
+
+Confirms that the model server is running.
+
+GET /api/metadata
+
+Returns:
+
+* Dataset information.
+* Model configuration.
+* Accuracy and other evaluation metrics.
+* Model comparison information.
+
+POST /api/predict
+
+Request body:
+
+{"text": "A thoughtful film with brilliant acting."}
+
+Response includes:
+
+* Predicted label.
+* Positive probability.
+* Influential feature explanations.
+
+An optional FastAPI application is also included in cinescope/api.py.
+
+======================================================================
+12. FRONTEND AND DASHBOARD
+======================================================================
+
+The project includes two frontend implementations.
+
+React/Vite frontend:
+
+* Source is in frontend/src.
+* It can be built with npm run build --prefix frontend.
+* It is useful for development and production bundling.
+
+Dependency-free fallback:
+
+* Located at web/index.html.
+* Served directly by the Python standard-library server.
+* This is the interface used by the one-command run flow.
+
+Dashboard features:
+
+1. Interactive review analysis.
+2. Positive, negative, and uncertain example buttons.
+3. Confidence gauge.
+4. Word-level explanation chips.
+5. Recent prediction history.
+6. Dataset statistics cards.
+7. Model comparison bars.
+8. Nvidia Geforce RTX acceleration status.
+9. Responsive black-and-white design.
+10. Dark/light mode toggle.
+11. Methodology section.
+12. Back-to-top navigation.
+
+The design is intentionally black and white to keep the project
+editorial, readable, and focused on the experiment.
+
+======================================================================
+13. NOTEBOOK AND VISUALIZATION
+======================================================================
+
+Notebook:
+
+notebooks/01_cinescope_baseline.ipynb
+
+The notebook contains:
+
+* Dataset counts.
+* Class-balance visualization.
+* Review-length statistics.
+* Review-length histograms.
+* Vocabulary statistics.
+* Most frequent normalized terms.
+* Training accuracy.
+* Validation accuracy.
+* Test accuracy.
+* Precision, recall, and F1.
+* Confusion matrix.
+* CUDA and PyTorch verification.
+
+The notebook is intended for the presentation because it shows both
+exploration and measured model performance.
+
+======================================================================
+14. PROJECT STRUCTURE
+======================================================================
+
+cinescope/
+
+* data.py - IMDb download and split loading.
+* preprocess.py - tokenization and normalization.
+* vectorizer.py - serializable TF-IDF unigram/bigram vectorizer.
+* model.py - CPU logistic regression and CUDA/PyTorch training.
+* metrics.py - accuracy, precision, recall, F1, and confusion counts.
+* persistence.py - JSON model and vectorizer persistence.
+* explain.py - influential feature explanations.
+* pipeline.py - training and evaluation orchestration.
+* cli.py - command-line interface.
+* server.py - dependency-free HTTP server.
+* api.py - optional FastAPI adapter.
+* gpu.py - CUDA capability and device selection.
+
+Other important directories:
+
+* frontend/ - React/Vite dashboard source.
+* web/ - dependency-free dashboard served by the Python server.
+* notebooks/ - analysis and visualization notebook.
+* tests/ - automated tests.
+* docs/ - project documentation and research notes.
+* models/ - lightweight serialized model artifacts.
+* results/ - measured experiment metrics.
+* data/ - downloaded dataset, excluded from Git.
+
+======================================================================
+15. TESTING AND VERIFICATION
+======================================================================
+
+Automated tests cover:
+
+* Text preprocessing.
+* Logistic regression training.
+* Model persistence and loading.
+* Explanation generation.
+* Metric calculation.
+* Device selection.
+* HTTP health endpoint.
+* HTTP prediction endpoint.
+
+Final verification performed:
+
+* Python tests: 5 passed.
+* Full test-set evaluation: 88.46 percent accuracy.
+* API metadata endpoint: HTTP 200.
+* React production build: successful.
+* Browser prediction flow: successful.
+* Dashboard explanation rendering: successful.
+* Git working tree: clean.
+
+======================================================================
+16. HOW TO RUN THE PROJECT
+======================================================================
+
+From the project directory:
+
+cd /home/abhiroop/Documents/ML_mini
+source .venv/bin/activate
+python -m cinescope.cli run --device cuda
+
+Then open:
+
+http://127.0.0.1:8000
+
+The command:
+
+1. Downloads the dataset if it is not already present.
+2. Trains the phrase-aware model.
+3. Uses CUDA when requested and available.
+4. Evaluates on the complete test split.
+5. Prints accuracy, precision, recall, F1, and confusion counts.
+6. Starts the CINESCOPE dashboard.
+
+To stop the application:
+
+Press Ctrl+C.
+
+CPU fallback:
+
+python -m cinescope.cli run --device cpu
+
+GPU status:
+
+python -m cinescope.cli gpu-status
+
+Run tests:
+
+python -m unittest discover -s tests -v
+
+======================================================================
+17. PRESENTATION DEMONSTRATION FLOW
+======================================================================
+
+Recommended live demo:
+
+1. Start the project with the CUDA command.
+2. Show the printed evaluation metrics.
+3. Open the dashboard.
+4. Show the dataset statistics cards.
+5. Click the positive example.
+6. Run the prediction.
+7. Point out the positive probability.
+8. Point out the influential words.
+9. Click the negative example and compare the explanation.
+10. Show the prediction history.
+11. Show the model comparison section.
+12. Toggle dark mode.
+13. Explain that the result is reproducible from the official dataset.
+
+Suggested screenshots for the PPT:
+
+* Dashboard landing page.
+* Positive prediction with explanation terms.
+* Negative prediction with explanation terms.
+* Notebook dataset statistics.
+* Notebook confusion matrix.
+* Terminal evaluation output.
+* Project folder structure.
+* GitHub repository.
+
+======================================================================
+18. LIMITATIONS
+======================================================================
+
+1. The model is a reproduction attempt, not an exact reproduction of the
+   paper, because the public dataset does not expose all original ratings.
+
+2. The model is trained on IMDb reviews and may not generalize equally well
+   to other domains such as product reviews, social media, or news.
+
+3. A single train/test split is reported. Cross-validation and statistical
+   confidence intervals were not part of the final lightweight pipeline.
+
+4. The CUDA training path converts sparse rows into dense tensors. This is
+   acceptable for the current 25,000-review experiment but would require
+   optimization for much larger datasets.
+
+5. Feature contributions explain the model decision mathematically but do
+   not establish human causality.
+
+6. The public dashboard is intended as an educational and research demo,
+   not as a production content-moderation system.
+
+======================================================================
+19. CONCLUSION
+======================================================================
+
+CINESCOPE successfully implements a complete sentiment-analysis workflow:
+
+* Research-paper study.
+* Dataset inspection.
+* Reproducible preprocessing.
+* Phrase-aware TF-IDF representation.
+* Logistic regression classification.
+* CUDA-accelerated training.
+* Full test-set evaluation.
+* Explainable predictions.
+* API integration.
+* Interactive visualization.
+* Automated testing.
+* Documentation and GitHub delivery.
+
+The final phrase-aware model reaches 88.46 percent accuracy and 88.74
+percent F1 on the complete 25,000-review IMDb test set. The main practical
+improvement over the first baseline came from adding bigram features, which
+help the model recognize short sentiment phrases and negation patterns.
+
+The project demonstrates that a relatively simple and inspectable model can
+produce a strong baseline while remaining easy to run, explain, test, and
+present.
+
+======================================================================
+20. FILES TO MENTION IN THE PRESENTATION
+======================================================================
+
+README.md
+
+Main project overview, setup instructions, verified results, and API usage.
+
+cinescope/vectorizer.py
+
+TF-IDF unigram and bigram feature extraction.
+
+cinescope/model.py
+
+Logistic regression and CUDA/PyTorch training.
+
+cinescope/pipeline.py
+
+Training and evaluation workflow.
+
+cinescope/explain.py
+
+Influential feature explanation generation.
+
+cinescope/server.py
+
+Dependency-free backend and dashboard server.
+
+frontend/src/main.jsx
+
+React dashboard implementation.
+
+web/index.html
+
+Dependency-free fallback dashboard.
+
+notebooks/01_cinescope_baseline.ipynb
+
+Dataset statistics, visualizations, and evaluation analysis.
+
+results/gpu_baseline_metrics.json
+
+Measured final evaluation metrics.
+
+docs/reproduction_report.md
+
+Research methodology, fidelity notes, and limitations.
+
+======================================================================
+END OF PRESENTATION BRIEF
+======================================================================
