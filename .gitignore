@@ -10,3 +10,11 @@ results/
 *.pdf
 frontend/node_modules/
 frontend/dist/
+
+# Keep the small, reproducible baseline deliverables in the repository.
+!models/
+!models/cinescope.json
+!results/
+!results/baseline_metrics.json
+!results/model_comparison_smoke.json
+!docs/project_writeup.pdf

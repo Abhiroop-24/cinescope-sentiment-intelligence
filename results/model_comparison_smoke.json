@@ -1,0 +1,148 @@
+{
+  "results": [
+    {
+      "model": "logistic_regression",
+      "representation": "binary_3gram",
+      "accuracy": 0.8615,
+      "precision_positive": 0.857566765578635,
+      "recall_positive": 0.867,
+      "f1": 0.8622575832918946
+    },
+    {
+      "model": "linear_svm",
+      "representation": "binary_3gram",
+      "accuracy": 0.848,
+      "precision_positive": 0.8459244532803181,
+      "recall_positive": 0.851,
+      "f1": 0.8484546360917248
+    },
+    {
+      "model": "naive_bayes",
+      "representation": "binary_3gram",
+      "accuracy": 0.8825,
+      "precision_positive": 0.9039070749736009,
+      "recall_positive": 0.856,
+      "f1": 0.879301489470981
+    },
+    {
+      "model": "random_forest",
+      "representation": "binary_3gram",
+      "accuracy": 0.842,
+      "precision_positive": 0.8244781783681214,
+      "recall_positive": 0.869,
+      "f1": 0.8461538461538461
+    },
+    {
+      "model": "boosting",
+      "representation": "binary_3gram",
+      "accuracy": 0.811,
+      "precision_positive": 0.7771836007130125,
+      "recall_positive": 0.872,
+      "f1": 0.82186616399623
+    },
+    {
+      "model": "dnn",
+      "representation": "binary_3gram",
+      "accuracy": 0.887,
+      "precision_positive": 0.8901209677419355,
+      "recall_positive": 0.883,
+      "f1": 0.8865461847389559
+    },
+    {
+      "model": "logistic_regression",
+      "representation": "count_3gram",
+      "accuracy": 0.841,
+      "precision_positive": 0.8382936507936508,
+      "recall_positive": 0.845,
+      "f1": 0.8416334661354582
+    },
+    {
+      "model": "linear_svm",
+      "representation": "count_3gram",
+      "accuracy": 0.8275,
+      "precision_positive": 0.8278278278278278,
+      "recall_positive": 0.827,
+      "f1": 0.8274137068534267
+    },
+    {
+      "model": "naive_bayes",
+      "representation": "count_3gram",
+      "accuracy": 0.8645,
+      "precision_positive": 0.8890074706510138,
+      "recall_positive": 0.833,
+      "f1": 0.8600929272070211
+    },
+    {
+      "model": "random_forest",
+      "representation": "count_3gram",
+      "accuracy": 0.8415,
+      "precision_positive": 0.8206572769953052,
+      "recall_positive": 0.874,
+      "f1": 0.8464891041162228
+    },
+    {
+      "model": "boosting",
+      "representation": "count_3gram",
+      "accuracy": 0.8085,
+      "precision_positive": 0.7747105966162066,
+      "recall_positive": 0.87,
+      "f1": 0.8195949128591615
+    },
+    {
+      "model": "dnn",
+      "representation": "count_3gram",
+      "accuracy": 0.879,
+      "precision_positive": 0.8555347091932458,
+      "recall_positive": 0.912,
+      "f1": 0.882865440464666
+    },
+    {
+      "model": "logistic_regression",
+      "representation": "tfidf_3gram",
+      "accuracy": 0.863,
+      "precision_positive": 0.8565815324165029,
+      "recall_positive": 0.872,
+      "f1": 0.8642220019821606
+    },
+    {
+      "model": "linear_svm",
+      "representation": "tfidf_3gram",
+      "accuracy": 0.873,
+      "precision_positive": 0.876008064516129,
+      "recall_positive": 0.869,
+      "f1": 0.8724899598393574
+    },
+    {
+      "model": "naive_bayes",
+      "representation": "tfidf_3gram",
+      "accuracy": 0.8685,
+      "precision_positive": 0.9018538713195202,
+      "recall_positive": 0.827,
+      "f1": 0.8628064684402713
+    },
+    {
+      "model": "random_forest",
+      "representation": "tfidf_3gram",
+      "accuracy": 0.8445,
+      "precision_positive": 0.8414271555996036,
+      "recall_positive": 0.849,
+      "f1": 0.8451966152314584
+    },
+    {
+      "model": "boosting",
+      "representation": "tfidf_3gram",
+      "accuracy": 0.8055,
+      "precision_positive": 0.7668122270742358,
+      "recall_positive": 0.878,
+      "f1": 0.8186480186480186
+    },
+    {
+      "model": "dnn",
+      "representation": "tfidf_3gram",
+      "accuracy": 0.8585,
+      "precision_positive": 0.8943894389438944,
+      "recall_positive": 0.813,
+      "f1": 0.8517548454688318
+    }
+  ]
+}

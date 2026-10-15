@@ -1,0 +1,17 @@
+{
+  "model": "dependency_free_logistic_regression",
+  "representation": "tfidf_unigram",
+  "train_samples": 25000,
+  "test_samples": 25000,
+  "max_features": 12000,
+  "metrics": {
+    "accuracy": 0.87908,
+    "precision": 0.9103663289166017,
+    "recall": 0.84096,
+    "f1": 0.8742878529546306,
+    "true_positive": 10512,
+    "true_negative": 11465,
+    "false_positive": 1035,
+    "false_negative": 1988
+  }
+}
