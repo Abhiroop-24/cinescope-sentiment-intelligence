@@ -17,7 +17,7 @@ reproducible reproduction attempt rather than an exact replication.
 ## Approach and implementation
 
 Text is lowercased, tokenized, stripped of punctuation, numbers, and common
-stopwords, and represented by normalized TF-IDF unigrams. A deterministic
+stopwords, and represented by normalized TF-IDF unigrams and bigrams. A deterministic
 sparse logistic regression optimizer trains on the official training split.
 The vectorizer and model are persisted together. The API returns a class,
 positive probability, and weighted feature contributions. The static frontend

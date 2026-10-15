@@ -8,9 +8,15 @@ from .persistence import load_artifact, save_artifact
 from .vectorizer import TfidfVectorizer
 
 
-def train(data_root: Path, artifact: Path, max_features: int = 12000, limit: int | None = None) -> dict:
+def train(
+    data_root: Path,
+    artifact: Path,
+    max_features: int = 20000,
+    limit: int | None = None,
+    ngram_range: tuple[int, int] = (1, 2),
+) -> dict:
     texts, labels = load_split(data_root, "train", limit)
-    vectorizer = TfidfVectorizer(max_features=max_features)
+    vectorizer = TfidfVectorizer(max_features=max_features, ngram_range=ngram_range)
     rows = vectorizer.fit_transform(texts)
     model = LogisticRegression().fit(rows, labels, len(vectorizer.vocabulary))
     save_artifact(artifact, vectorizer, model)
@@ -21,18 +27,20 @@ def train_accelerated(
     data_root: Path,
     artifact: Path,
     *,
-    max_features: int = 12000,
+    max_features: int = 20000,
     limit: int | None = None,
     device: str = "auto",
+    ngram_range: tuple[int, int] = (1, 2),
 ) -> dict:
     texts, labels = load_split(data_root, "train", limit)
-    vectorizer = TfidfVectorizer(max_features=max_features)
+    vectorizer = TfidfVectorizer(max_features=max_features, ngram_range=ngram_range)
     rows = vectorizer.fit_transform(texts)
     model = fit_torch(rows, labels, len(vectorizer.vocabulary), device=device)
     save_artifact(artifact, vectorizer, model)
     return {
         "samples": len(labels),
         "features": len(vectorizer.vocabulary),
+        "ngram_range": list(ngram_range),
         "device": device,
         "artifact": str(artifact),
     }

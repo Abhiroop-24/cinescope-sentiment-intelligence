@@ -42,7 +42,8 @@ separate from this project's MIT-style source code.
 Punctuation, numbers, line breaks, and a compact English stopword list are
 removed; text is lowercased and tokenized. Training vocabulary and IDF values
 are fit only on `train`; evaluation uses untouched `test`. Generated data stays
-outside version control. The baseline uses normalized TF-IDF unigrams and a
+outside version control. The baseline uses normalized TF-IDF unigrams and
+bigrams and a
 deterministic sparse logistic regression optimizer.
 
 ## Risks

@@ -72,12 +72,12 @@ Requesting CUDA when no compatible runtime exists fails explicitly.
 * `data/` — downloaded dataset files, ignored by Git.
 
 The tracked baseline was trained on all 25,000 IMDb training reviews with
-12,000 TF-IDF features and reaches 0.87908 accuracy on the untouched 25,000
+20,000 TF-IDF unigram-and-bigram features and reaches 0.8846 accuracy on the untouched 25,000
 review test split. Re-run the commands above to regenerate the artifact and
 results locally.
 
 The CUDA-enabled PyTorch run was also verified on an NVIDIA GeForce RTX 2050:
-the same 12,000-feature setup reached 0.8778 accuracy and is recorded in
+the phrase-aware 20,000-feature setup reached 0.8846 accuracy and is recorded in
 `results/gpu_baseline_metrics.json`. The GPU model is stored in
 `models/cinescope_gpu.json`.
 

@@ -21,7 +21,7 @@ def main() -> None:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("download")
     train_parser = sub.add_parser("train")
-    train_parser.add_argument("--max-features", type=int, default=12000)
+    train_parser.add_argument("--max-features", type=int, default=20000)
     train_parser.add_argument("--limit", type=int)
     eval_parser = sub.add_parser("evaluate")
     eval_parser.add_argument("--limit", type=int)
@@ -31,7 +31,7 @@ def main() -> None:
     sub.add_parser("gpu-status")
     run_parser = sub.add_parser("run", help="download, train with GPU when available, evaluate, and serve")
     run_parser.add_argument("--device", choices=("auto", "cuda", "cpu"), default="auto")
-    run_parser.add_argument("--max-features", type=int, default=12000)
+    run_parser.add_argument("--max-features", type=int, default=20000)
     run_parser.add_argument("--limit", type=int)
     args = parser.parse_args()
     data_root = ROOT / "data" / "raw"
@@ -58,7 +58,7 @@ def main() -> None:
         print("Training accelerated model...")
         print(json.dumps(train_accelerated(
             data_root / "aclImdb", artifact, max_features=args.max_features,
-            limit=args.limit, device=args.device,
+            limit=args.limit, device=args.device, ngram_range=(1, 2),
         ), indent=2))
         metrics = evaluate(data_root / "aclImdb", artifact, args.limit)
         print("Evaluation:")

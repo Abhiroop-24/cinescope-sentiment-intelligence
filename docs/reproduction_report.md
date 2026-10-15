@@ -50,7 +50,7 @@ No result is hard-coded in the application.
 ### Verified baseline run
 
 The full 25,000-review training split and full 25,000-review test split were
-run on 2026-10-15 with 12,000 maximum TF-IDF unigram features:
+CPU baseline run on 2026-10-15 with 12,000 maximum TF-IDF unigram features:
 
 | Accuracy | Precision | Recall | F1 |
 |---:|---:|---:|---:|
@@ -82,5 +82,6 @@ PyTorch/CUDA availability and selects `cuda` only when the runtime is
 actually available; otherwise the project remains reproducible on CPU.
 
 The accelerated implementation was verified on an NVIDIA GeForce RTX 2050
-with PyTorch 2.11.0+cu128. Full-split training used 25,000 reviews, 12,000
-TF-IDF features, and reached 0.8778 accuracy on the 25,000-review test split.
+with PyTorch 2.11.0+cu128. Full-split training used 25,000 reviews and 20,000
+TF-IDF unigram-and-bigram features, reaching 0.8846 accuracy on the
+25,000-review test split.

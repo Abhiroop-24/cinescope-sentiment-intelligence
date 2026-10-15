@@ -1,19 +1,19 @@
 {
   "model": "torch_logistic_regression",
-  "representation": "tfidf_unigram",
+  "representation": "tfidf_unigram_bigram",
   "device": "cuda",
   "gpu": "NVIDIA GeForce RTX 2050",
   "train_samples": 25000,
   "test_samples": 25000,
-  "max_features": 12000,
+  "max_features": 20000,
   "metrics": {
-    "accuracy": 0.8778,
-    "precision": 0.8582808588119263,
-    "recall": 0.90504,
-    "f1": 0.8810404579260932,
-    "true_positive": 11313,
-    "true_negative": 10632,
-    "false_positive": 1868,
-    "false_negative": 1187
+    "accuracy": 0.8846,
+    "precision": 0.8665650019062142,
+    "recall": 0.9092,
+    "f1": 0.8873706812414601,
+    "true_positive": 11365,
+    "true_negative": 10750,
+    "false_positive": 1750,
+    "false_negative": 1135
   }
 }
