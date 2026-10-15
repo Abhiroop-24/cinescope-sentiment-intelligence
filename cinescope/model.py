@@ -55,3 +55,53 @@ class LogisticRegression:
         instance.weights = [float(value) for value in data["weights"]]
         instance.bias = float(data["bias"])
         return instance
+
+
+def fit_torch(
+    rows: list[dict[int, float]],
+    labels: list[int],
+    features: int,
+    *,
+    device: str = "auto",
+    epochs: int = 8,
+    batch_size: int = 512,
+    learning_rate: float = 0.08,
+) -> LogisticRegression:
+    """Train the same persisted model with batched PyTorch CUDA tensors."""
+    try:
+        import torch
+    except ImportError as error:
+        raise RuntimeError(
+            "GPU training requires PyTorch. Install a CUDA wheel with "
+            "`pip install --index-url https://download.pytorch.org/whl/cu128 torch`."
+        ) from error
+    if device == "auto":
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    if device == "cuda" and not torch.cuda.is_available():
+        raise RuntimeError("CUDA was requested but torch.cuda.is_available() is false")
+    target = torch.device(device)
+    matrix = torch.zeros((len(rows), features), dtype=torch.float32)
+    for row_index, row in enumerate(rows):
+        for feature_index, value in row.items():
+            matrix[row_index, feature_index] = value
+    x = matrix.to(target)
+    y = torch.tensor(labels, dtype=torch.float32, device=target).unsqueeze(1)
+    weights = torch.zeros((features, 1), dtype=torch.float32, device=target, requires_grad=True)
+    bias = torch.zeros(1, dtype=torch.float32, device=target, requires_grad=True)
+    optimizer = torch.optim.Adam((weights, bias), lr=learning_rate, weight_decay=1e-4)
+    generator = torch.Generator(device=target).manual_seed(42)
+    for _ in range(epochs):
+        order = torch.randperm(len(rows), generator=generator, device=target)
+        for start in range(0, len(rows), batch_size):
+            indices = order[start:start + batch_size]
+            loss = torch.nn.functional.binary_cross_entropy_with_logits(
+                x.index_select(0, indices).matmul(weights) + bias,
+                y.index_select(0, indices),
+            )
+            optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+    result = LogisticRegression(epochs=epochs, learning_rate=learning_rate)
+    result.weights = weights.detach().flatten().cpu().tolist()
+    result.bias = float(bias.detach().cpu().item())
+    return result

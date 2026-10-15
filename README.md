@@ -10,17 +10,26 @@ the paper-inspired cleaning and TF-IDF representation, trains a logistic
 regression classifier, evaluates on the untouched test split, and exposes the
 model through a small web application with word-level explanations.
 
-## Quick start
+## Quick start (one command)
 
 ```bash
-python3 -m cinescope.cli download
-python3 -m cinescope.cli train --max-features 12000
-python3 -m cinescope.cli evaluate
-python3 -m cinescope.cli serve
+source .venv/bin/activate
+python -m cinescope.cli run --device auto
 ```
 
-Open <http://127.0.0.1:8000>. The commands use only the Python standard
-library. For the optional six-model comparison, install the packages in
+This single command downloads the official IMDb data if needed, trains the
+model with CUDA when PyTorch detects your GPU, evaluates the full test split,
+and starts the website at <http://127.0.0.1:8000>. Use `--device cuda` to
+require the GPU or `--device cpu` to force CPU execution. Install the
+dependencies once with:
+
+```bash
+pip install -r requirements.txt
+pip install -r requirements-cuda.txt
+```
+
+The separate commands remain available for debugging. For the optional
+six-model comparison, install the packages in
 `requirements-optional.txt` and run:
 
 ```bash
@@ -39,14 +48,12 @@ by `npm run build --prefix frontend` creates its production bundle. The
 dependency-free `web/index.html` remains the fallback served by the standard
 library server.
 
-CUDA is optional and detected without changing the CPU baseline:
+CUDA status can be checked directly:
 
 ```bash
 python3 -m cinescope.cli gpu-status
 ```
 
-Install a CUDA-matched PyTorch wheel using the official PyTorch selector and
-then use `cinescope.gpu.select_device("auto")` in optional training code.
 Requesting CUDA when no compatible runtime exists fails explicitly.
 
 ## Project layout
@@ -68,6 +75,11 @@ The tracked baseline was trained on all 25,000 IMDb training reviews with
 12,000 TF-IDF features and reaches 0.87908 accuracy on the untouched 25,000
 review test split. Re-run the commands above to regenerate the artifact and
 results locally.
+
+The CUDA-enabled PyTorch run was also verified on an NVIDIA GeForce RTX 2050:
+the same 12,000-feature setup reached 0.8778 accuracy and is recorded in
+`results/gpu_baseline_metrics.json`. The GPU model is stored in
+`models/cinescope_gpu.json`.
 
 ## Research fidelity and limitations
 

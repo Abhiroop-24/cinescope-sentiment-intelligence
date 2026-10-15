@@ -9,7 +9,7 @@ from pathlib import Path
 from .data import download_dataset
 from .explain import explain
 from .persistence import load_artifact
-from .pipeline import evaluate, train
+from .pipeline import evaluate, train, train_accelerated
 from .server import run
 from .gpu import cuda_status
 
@@ -29,6 +29,10 @@ def main() -> None:
     predict_parser.add_argument("text")
     sub.add_parser("serve")
     sub.add_parser("gpu-status")
+    run_parser = sub.add_parser("run", help="download, train with GPU when available, evaluate, and serve")
+    run_parser.add_argument("--device", choices=("auto", "cuda", "cpu"), default="auto")
+    run_parser.add_argument("--max-features", type=int, default=12000)
+    run_parser.add_argument("--limit", type=int)
     args = parser.parse_args()
     data_root = ROOT / "data" / "raw"
     artifact = ROOT / "models" / "cinescope.json"
@@ -47,6 +51,21 @@ def main() -> None:
                           "explanation": explain(args.text, vectorizer, model)}, indent=2))
     elif args.command == "gpu-status":
         print(json.dumps(cuda_status(), indent=2))
+    elif args.command == "run":
+        if not (data_root / "aclImdb").exists():
+            print("Downloading IMDb dataset...")
+            download_dataset(data_root)
+        print("Training accelerated model...")
+        print(json.dumps(train_accelerated(
+            data_root / "aclImdb", artifact, max_features=args.max_features,
+            limit=args.limit, device=args.device,
+        ), indent=2))
+        metrics = evaluate(data_root / "aclImdb", artifact, args.limit)
+        print("Evaluation:")
+        print(json.dumps(metrics, indent=2))
+        print("Starting CINESCOPE at http://127.0.0.1:8000")
+        run_server = run
+        run_server(artifact)
     else:
         run(artifact)
 
