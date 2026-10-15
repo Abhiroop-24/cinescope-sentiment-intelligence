@@ -59,7 +59,15 @@ Requesting CUDA when no compatible runtime exists fails explicitly.
 * `tests/` — unit and API tests.
 * `docs/` — dataset datasheet, research reproduction report, and demo/viva
   support.
-* `models/` and `data/` — generated artifacts (ignored by Git).
+* `models/` — the lightweight serialized baseline artifact tracked for the
+  demo.
+* `results/` — measured baseline and bounded comparison results.
+* `data/` — downloaded dataset files, ignored by Git.
+
+The tracked baseline was trained on all 25,000 IMDb training reviews with
+12,000 TF-IDF features and reaches 0.87908 accuracy on the untouched 25,000
+review test split. Re-run the commands above to regenerate the artifact and
+results locally.
 
 ## Research fidelity and limitations
 
