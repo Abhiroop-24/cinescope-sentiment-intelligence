@@ -1,0 +1,3 @@
+# Optional GPU status/training extension. Install a CUDA-matched PyTorch wheel
+# from https://pytorch.org/get-started/locally/ before using CUDA execution.
+torch>=2.2

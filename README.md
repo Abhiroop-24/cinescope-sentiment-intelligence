@@ -38,6 +38,16 @@ by `npm run build --prefix frontend` creates its production bundle. The
 dependency-free `web/index.html` remains the fallback served by the standard
 library server.
 
+CUDA is optional and detected without changing the CPU baseline:
+
+```bash
+python3 -m cinescope.cli gpu-status
+```
+
+Install a CUDA-matched PyTorch wheel using the official PyTorch selector and
+then use `cinescope.gpu.select_device("auto")` in optional training code.
+Requesting CUDA when no compatible runtime exists fails explicitly.
+
 ## Project layout
 
 * `cinescope/` — data loading, preprocessing, vectorization, model, metrics,

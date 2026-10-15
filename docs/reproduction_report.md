@@ -58,3 +58,7 @@ runtime, random seeds, and the exact split before results are presented.
 The executable implementation is `cinescope.compare`; it fails explicitly
 when the optional dependency is absent and writes measured JSON results when
 the comparison is run.
+
+CUDA is not assumed for the published baseline. `cinescope.gpu` reports
+PyTorch/CUDA availability and selects `cuda` only when the runtime is
+actually available; otherwise the project remains reproducible on CPU.

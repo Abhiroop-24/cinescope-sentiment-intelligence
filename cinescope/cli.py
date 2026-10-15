@@ -11,6 +11,7 @@ from .explain import explain
 from .persistence import load_artifact
 from .pipeline import evaluate, train
 from .server import run
+from .gpu import cuda_status
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -27,6 +28,7 @@ def main() -> None:
     predict_parser = sub.add_parser("predict")
     predict_parser.add_argument("text")
     sub.add_parser("serve")
+    sub.add_parser("gpu-status")
     args = parser.parse_args()
     data_root = ROOT / "data" / "raw"
     artifact = ROOT / "models" / "cinescope.json"
@@ -43,6 +45,8 @@ def main() -> None:
         print(json.dumps({"label": "positive" if probability >= 0.5 else "negative",
                           "probability": round(probability, 4),
                           "explanation": explain(args.text, vectorizer, model)}, indent=2))
+    elif args.command == "gpu-status":
+        print(json.dumps(cuda_status(), indent=2))
     else:
         run(artifact)
 

@@ -11,6 +11,7 @@ from cinescope.model import LogisticRegression
 from cinescope.persistence import load_artifact, save_artifact
 from cinescope.preprocess import normalize, tokenize
 from cinescope.server import create_server
+from cinescope.gpu import select_device
 from cinescope.vectorizer import TfidfVectorizer
 
 
@@ -61,6 +62,9 @@ class CoreTests(unittest.TestCase):
                 self.assertIn(json.load(response)["label"], {"positive", "negative"})
             server.shutdown()
             server.server_close()
+
+    def test_device_selection_cpu(self):
+        self.assertEqual(select_device("cpu"), "cpu")
 
 
 if __name__ == "__main__":
