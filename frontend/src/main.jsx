@@ -26,7 +26,7 @@ function App() {
   const model = meta?.model || {};
   return <div className={dark ? 'app dark' : 'app'}>
     <header><b>CINESCOPE / 20</b><span>PES · UE24CS352A</span><button className="theme" onClick={() => setDark(!dark)}>{dark ? '☼' : '☾'} mode</button></header>
-    <section className="hero"><div><small>EXPLAINABLE MOVIE REVIEW INTELLIGENCE</small><h1>What did<br/><em>you think?</em></h1><p>Read the feeling behind the words. A CUDA-trained sentiment model with transparent, human-readable explanations.</p></div><div className="status"><i/> GPU ACCELERATION ACTIVE</div></section>
+    <section className="hero"><div><small>EXPLAINABLE MOVIE REVIEW INTELLIGENCE</small><h1>What did<br/><em>you think?</em></h1><p>Read the feeling behind the words. A CUDA-trained sentiment model with transparent, human-readable explanations.</p></div><div className="status"><i/> Nvidia Geforce RTX</div></section>
     <section className="lab"><div className="section-title"><small>01 / LIVE ANALYSIS</small><h2>Make a call.</h2></div>
       <div className="examples">{Object.keys(examples).map(key => <button key={key} onClick={() => setText(examples[key])}>Try {key}</button>)}</div>
       <form onSubmit={analyze}><textarea value={text} onChange={e => setText(e.target.value)} placeholder="Paste a movie review here…"/><button className="primary">ANALYZE REVIEW <span>↗</span></button></form>
