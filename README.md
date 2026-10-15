@@ -27,7 +27,8 @@ library. For the optional six-model comparison, install the packages in
 python3 -m cinescope.compare_cli --data-root data/raw/aclImdb
 ```
 
-The FastAPI adapter is available after `pip install -r requirements.txt`:
+The FastAPI adapter and its test client are available after
+`pip install -r requirements.txt`:
 
 ```bash
 uvicorn cinescope.api:app --reload
