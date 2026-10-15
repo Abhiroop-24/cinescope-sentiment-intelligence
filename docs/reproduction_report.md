@@ -47,6 +47,19 @@ counts on the untouched test split. Run with `--limit` for a quick smoke test;
 reported final results should use the full split and the generated artifact.
 No result is hard-coded in the application.
 
+### Verified baseline run
+
+The full 25,000-review training split and full 25,000-review test split were
+run on 2026-10-15 with 12,000 maximum TF-IDF unigram features:
+
+| Accuracy | Precision | Recall | F1 |
+|---:|---:|---:|---:|
+| 0.87908 | 0.91037 | 0.84096 | 0.87429 |
+
+Confusion counts were TP=10,512, TN=11,465, FP=1,035, and FN=1,988. The
+serialized artifact is generated under `models/cinescope.json` and is ignored
+by Git because it is reproducible from the downloaded dataset.
+
 ## Comparison plan
 
 The paper's six algorithm families and four representations remain useful
@@ -58,6 +71,11 @@ runtime, random seeds, and the exact split before results are presented.
 The executable implementation is `cinescope.compare`; it fails explicitly
 when the optional dependency is absent and writes measured JSON results when
 the comparison is run.
+An 18-configuration smoke run (six classifier families × three
+representations) on 1,000 reviews per class produced measured results in
+`results/model_comparison_smoke.json`; its leading configuration was DNN with
+binary 1–3-gram features at 0.8870 accuracy. These bounded results are not
+presented as full-split paper replication results.
 
 CUDA is not assumed for the published baseline. `cinescope.gpu` reports
 PyTorch/CUDA availability and selects `cuda` only when the runtime is
