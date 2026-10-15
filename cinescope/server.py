@@ -13,6 +13,7 @@ from .persistence import load_artifact
 
 def create_server(artifact: Path, host: str = "127.0.0.1", port: int = 8000) -> ThreadingHTTPServer:
     vectorizer, model = load_artifact(artifact)
+    root = Path(__file__).resolve().parents[1]
 
     class Handler(BaseHTTPRequestHandler):
         def _send(self, status: int, payload: object, content_type: str = "application/json") -> None:
@@ -26,6 +27,15 @@ def create_server(artifact: Path, host: str = "127.0.0.1", port: int = 8000) -> 
         def do_GET(self) -> None:  # noqa: N802
             if urlparse(self.path).path == "/api/health":
                 self._send(200, {"status": "ok", "model": "cinescope-logistic-regression"})
+                return
+            if urlparse(self.path).path == "/api/metadata":
+                gpu_path = root / "results" / "gpu_baseline_metrics.json"
+                compare_path = root / "results" / "model_comparison_smoke.json"
+                self._send(200, {
+                    "dataset": {"train": 25000, "test": 25000, "positive": 12500, "negative": 12500},
+                    "model": json.loads(gpu_path.read_text()) if gpu_path.exists() else {},
+                    "comparison": json.loads(compare_path.read_text()).get("results", []) if compare_path.exists() else [],
+                })
                 return
             index = Path(__file__).resolve().parents[1] / "web" / "index.html"
             self._send(200, index.read_bytes(), "text/html; charset=utf-8")
